@@ -34,6 +34,9 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Tenant",
         required: [true, "A valid Tenant must be specified"]
+    },
+    phone: {
+        type: Schema.Types.String
     }
 }, {timestamps: true})
 
