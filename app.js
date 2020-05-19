@@ -37,13 +37,14 @@ app.use(express.static(path.join(__dirname, "public")));
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const tenantsRouter = require("./routes/tenants");
-const deviceRouter = require('./routes/devices');
-
+const devicesRouter = require("./routes/devices");
+const ticketsRouter = require("./routes/tickets");
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/tenants", tenantsRouter);
-app.use("/devices", deviceRouter);
+app.use("/devices", devicesRouter);
+app.use("/tickets", ticketsRouter);
 // app.use("/api", indexRouter);
 
 // app.use("*", (req, res) => {
