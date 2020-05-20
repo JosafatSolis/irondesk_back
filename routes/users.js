@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const bcrypt = require ("bcrypt");
+const jwt = require ("jsonwebtoken");
+const {verifyToken} = require("./auth")
 
-router.get("/", function (req, res, next) {
+router.get("/", verifyToken, function (req, res, next) {
   User.find()
     .then((users) => res.status(200).json(users))
     .catch((reason) => {
@@ -11,7 +14,7 @@ router.get("/", function (req, res, next) {
     });
 });
 
-router.get("/:id", (req, res, next) => {
+router.get("/:id", verifyToken, (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     .then((found) => {
@@ -30,8 +33,12 @@ router.get("/:id", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res) => {
-  User.create(req.body)
+router.post("/", verifyToken, (req, res) => {
+  const { password, ...userValues } = req.body;
+  bcrypt.hash(password, 10).then((hashedPassword) => {
+    const user = { ...userValues, password: hashedPassword };
+  });
+  User.create(user)
     .then((created) => {
       console.log(created);
       res.status(200).json({ created });
@@ -42,7 +49,7 @@ router.post("/", (req, res) => {
     });
 });
 
-router.patch("/:id", (req, res, next) => {
+router.patch("/:id", verifyToken, (req, res, next) => {
   const { id } = req.params;
   // Note that new returns the updated version
   User.findByIdAndUpdate(id, req.body, { new: true })
@@ -57,7 +64,7 @@ router.patch("/:id", (req, res, next) => {
     .catch((reason) => res.status(400).json({ error: reason }));
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", verifyToken, (req, res, next) => {
   const { id } = req.params;
   User.findByIdAndDelete(id)
     .then((deleted) => res.status(200).json({ deleted }))
