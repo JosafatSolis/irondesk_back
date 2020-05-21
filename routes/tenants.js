@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Tenant = require("../models/Tenant");
-const {verifyToken} = require("./auth")
+const {verifyToken} = require("../utils/verifytoken");
 
 // se verificaron las rutas de GET POST PATCH y DELETE y funcionan correctamente 
 
 
 // GET ROUTE ALL
-router.get("/", function (req, res, next) {
+router.get("/", verifyToken, function (req, res, next) {
     Tenant.find()
       .then((tenants) => res.status(200).json(tenants))
       .catch((reason) => {
@@ -17,7 +17,7 @@ router.get("/", function (req, res, next) {
   });
 
 //GET ROUTE ID
-router.get("/:id", (req, res, next) => {
+router.get("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     Tenant.findById(id).then(found => {
         if (found) {
@@ -35,7 +35,7 @@ router.get("/:id", (req, res, next) => {
 });
 
 // CREATE ROUTE 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, (req, res) => {
     Tenant.create(req.body).then(created => {
         console.log(created);
         res.status(200).json({created});
@@ -46,7 +46,7 @@ router.post("/", (req, res) => {
 })
 
 // UPDATE ROUTE 
-router.patch("/:id", (req, res, next) => {
+router.patch("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     // Note that new returns the updated version
     Tenant.findByIdAndUpdate(id, req.body, { new: true })
@@ -62,7 +62,7 @@ router.patch("/:id", (req, res, next) => {
   });
   
   //DELETE ROUTE 
-  router.delete("/:id", (req, res, next) => {
+  router.delete("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     Tenant.findByIdAndDelete(id)
       .then((deleted) => res.status(200).json({ deleted }))

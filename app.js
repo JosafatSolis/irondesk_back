@@ -39,14 +39,14 @@ const usersRouter = require("./routes/users");
 const tenantsRouter = require("./routes/tenants");
 const devicesRouter = require("./routes/devices");
 const ticketsRouter = require("./routes/tickets");
-const authRouter = require ("./routes/auth");
+const authLogin = require ("./utils/login");
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/tenants", tenantsRouter);
 app.use("/devices", devicesRouter);
 app.use("/tickets", ticketsRouter);
-app.use("/auth", authRouter);
+app.use("/login", authLogin);
 // app.use("/api", indexRouter);
 
 // app.use("*", (req, res) => {

@@ -4,7 +4,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-router.post("/login", (req, res, next) => {
+router.post("/", (req, res, next) => {
   const { email, password } = req.body;
   // Validar que existe el usuario
   User.findOne({ email }).then((user) => {
@@ -28,6 +28,8 @@ router.post("/login", (req, res, next) => {
             httpOnly: true,
           })
           .json({ user: userObject });
+      } else {
+        res.status(401).json({error: "User or password not found."})
       }
     });
   });
@@ -36,18 +38,5 @@ router.post("/login", (req, res, next) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("token").json({ msg: "logout" });
 });
-
-exports.verifyToken = (req, res, next) => {
-  // Extrae el id del token
-  const { token } = req.cookies;
-  jwt.verify(token, process.env.SECRET, (error, decoded) => {
-    if (error) return res.status(401).json({ error });
-    // Ya con el id, busca el objeto en la BD y lo inserta en el request
-    User.findById(decoded.id).then((user) => {
-      req.user = user;
-      next();
-    });
-  });
-};
 
 module.exports = router;
