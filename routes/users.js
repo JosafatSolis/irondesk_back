@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require ("bcrypt");
-const jwt = require ("jsonwebtoken");
-const {verifyToken} = require("./auth")
+const {verifyToken} = require("./auth");
 
 router.get("/", verifyToken, function (req, res, next) {
   User.find()
