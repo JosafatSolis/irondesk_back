@@ -17,7 +17,7 @@ mongoose
       `Conected to Mongo! Database name: ${onfulfilled.connections[0].name}`
     )
   )
-  .catch((err) => console.log("Error connecto to Mongo, ", err));
+  .catch((err) => console.log("Error connec to to Mongo, ", err));
 
 const app = express();
 

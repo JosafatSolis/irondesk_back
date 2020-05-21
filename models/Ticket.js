@@ -11,7 +11,7 @@ const ticketSchema = new Schema({
     tenant: {
         type: Schema.Types.ObjectId,
         ref: "Tenant",
-        required: [true, "The tenant hast to be defined"]
+        required: [true, "The tenant has to be defined"]
     },
     clientUser: {
         type: Schema.Types.ObjectId,
