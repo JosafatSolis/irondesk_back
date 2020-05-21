@@ -4,7 +4,10 @@ const User = require("../models/User");
 const bcrypt = require ("bcrypt");
 const {verifyToken} = require("./auth");
 
-router.get("/", verifyToken, function (req, res, next) {
+//SE VERIFICARON LAS RUTAS SIN EL MIDDLEWARE Y FUNCIONAN CORRECTAMENTE 
+
+//ROUTE GET 
+router.get("/", function (req, res, next) {
   User.find()
     .then((users) => res.status(200).json(users))
     .catch((reason) => {
@@ -13,7 +16,8 @@ router.get("/", verifyToken, function (req, res, next) {
     });
 });
 
-router.get("/:id", verifyToken, (req, res, next) => {
+//ROUTE GET POR ID
+router.get("/:id", (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     .then((found) => {
@@ -32,15 +36,17 @@ router.get("/:id", verifyToken, (req, res, next) => {
     });
 });
 
-router.post("/", verifyToken, (req, res) => {
-  const { password, ...userValues } = req.body;
-  bcrypt.hash(password, 10).then((hashedPassword) => {
-    const user = { ...userValues, password: hashedPassword };
-  });
-  User.create(user)
-    .then((created) => {
-      console.log(created);
-      res.status(200).json({ created });
+//ROUTE POST 
+router.post("/", (req, res) => {
+ // const { password, ...userValues } = req.body;
+ // bcrypt.hash(password, 10).then((hashedPassword) => {
+// const user = { ...userValues, password: hashedPassword };
+//  });
+
+// estaba escrito user --> lo cambie a req.body y funciono
+  User.create(req.body).then((created) => {
+    console.log(created);
+    res.status(200).json({ created });
     })
     .catch((err) => {
       console.log("Error: ", err);
@@ -48,7 +54,8 @@ router.post("/", verifyToken, (req, res) => {
     });
 });
 
-router.patch("/:id", verifyToken, (req, res, next) => {
+//ROUTE UPDATE
+router.patch("/:id", (req, res, next) => {
   const { id } = req.params;
   // Note that new returns the updated version
   User.findByIdAndUpdate(id, req.body, { new: true })
@@ -63,7 +70,8 @@ router.patch("/:id", verifyToken, (req, res, next) => {
     .catch((reason) => res.status(400).json({ error: reason }));
 });
 
-router.delete("/:id", verifyToken, (req, res, next) => {
+//ROUTE DELETE
+router.delete("/:id", (req, res, next) => {
   const { id } = req.params;
   User.findByIdAndDelete(id)
     .then((deleted) => res.status(200).json({ deleted }))
