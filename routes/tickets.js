@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Ticket = require("../models/Ticket");
+const {verifyToken} = require("../utils/verifytoken");
 
+//SE PROBARON LAS RUTAS Y TODAS FUNCIONAN SIN MIDDLEWARE
 
-router.get("/", function (req, res, next) {
+//ROUTE GET ALL
+router.get("/", verifyToken, function (req, res, next) {
     Ticket.find()
       .then((tickets) => res.status(200).json(tickets))
       .catch((reason) => {
@@ -12,7 +15,8 @@ router.get("/", function (req, res, next) {
       });
   });
 
-router.get("/:id", (req, res, next) => {
+//ROUTE GET ID
+router.get("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     Ticket.findById(id).then(found => {
         if (found) {
@@ -29,7 +33,8 @@ router.get("/:id", (req, res, next) => {
     })
 });
   
-router.post("/", (req, res, next) => {
+//ROUTE POST
+router.post("/", verifyToken, (req, res, next) => {
   Ticket.create(req.body)
     .then((created) => {res.status(200).json({ created });
     console.log(created);
@@ -37,7 +42,8 @@ router.post("/", (req, res, next) => {
     .catch((reason) => res.status(400).json({ error: reason }));
 });
 
-router.patch("/:id", (req, res, next) => {
+//ROUTE UPDATE
+router.patch("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     // Note that new returns the updated version
     Ticket.findByIdAndUpdate(id, req.body, { new: true })
@@ -52,7 +58,8 @@ router.patch("/:id", (req, res, next) => {
       .catch((reason) => res.status(400).json({ error: reason }));
   });
   
-  router.delete("/:id", (req, res, next) => {
+  //ROUTE DELETE
+  router.delete("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     Ticket.findByIdAndDelete(id)
       .then((deleted) => res.status(200).json({ deleted }))

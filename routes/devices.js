@@ -2,8 +2,13 @@ const express = require("express");
 const router = express.Router();
 const Device = require("../models/Device");
 const mongoose = require("mongoose");
+const {verifyToken} = require("../utils/verifytoken");
+// agregara el middleware entre rutas para comprobar q rutas si funcionan
 
-router.get("/", function (req, res, next) {
+// se verificaron las rutas de GET POST PATCH y DELETE y funcionan correctamente 
+// verificar rutas al agregar el middleware
+
+router.get("/", verifyToken, function(req, res, next) {
   Device.find()
     .then((devices) => res.status(200).json(devices))
     .catch((reason) => {
@@ -12,7 +17,7 @@ router.get("/", function (req, res, next) {
     });
 });
 
-router.get("/:id", (req, res, next) => {
+router.get("/:id", verifyToken, (req, res, next) => {
   const { id } = req.params;
   Device.findById(id)
     .then((found) => {
@@ -31,7 +36,7 @@ router.get("/:id", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", verifyToken, (req, res, next) => {
   Device.create(req.body)
     .then((created) => res.status(200).json({ created }))
     .catch((err) => {
@@ -40,7 +45,7 @@ router.post("/", (req, res, next) => {
     });
 });
 
-router.patch("/:id", (req, res, next) => {
+router.patch("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     // Note that new returns the updated version
     Device.findByIdAndUpdate(id, req.body, { new: true })
@@ -55,7 +60,7 @@ router.patch("/:id", (req, res, next) => {
       .catch((reason) => res.status(400).json({ error: reason }));
   });
   
-  router.delete("/:id", (req, res, next) => {
+  router.delete("/:id", verifyToken, (req, res, next) => {
     const { id } = req.params;
     Device.findByIdAndDelete(id)
       .then((deleted) => res.status(200).json({ deleted }))
