@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Ticket = require("../models/Ticket");
-const {verifyToken} = require("../utils/verifytoken");
-
-//SE PROBARON LAS RUTAS Y TODAS FUNCIONAN SIN MIDDLEWARE
+const {verifyToken} = require("../utils/verifyToken");
+const { checkRole } = require("../utils/checkRole");
 
 //ROUTE GET ALL
-router.get("/", verifyToken, function (req, res, next) {
+router.get("/", verifyToken, checkRole(["Tecnician", "Admin"]), function (req, res, next) {
     Ticket.find()
       .then((tickets) => res.status(200).json(tickets))
       .catch((reason) => {
@@ -15,8 +14,24 @@ router.get("/", verifyToken, function (req, res, next) {
       });
   });
 
+//ROUTE GET TENANT_ID
+router.get("/:tenant_id", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
+  const { tenant_id } = req.params;
+  Ticket.find({tenant: tenant_id}).then(found => {
+      if (found) {
+          res.status(200).json(found);
+      } else {
+          res.status(200).json({});
+      }
+  }).catch(reason => {
+      // O que ocurra un error si el id no viene en el formato correcto.
+      console.log("Error: ", reason);
+      res.status(404).json({error: reason});
+  })
+});
+
 //ROUTE GET ID
-router.get("/:id", verifyToken, (req, res, next) => {
+router.get("/:id", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
     const { id } = req.params;
     Ticket.findById(id).then(found => {
         if (found) {
@@ -34,7 +49,7 @@ router.get("/:id", verifyToken, (req, res, next) => {
 });
   
 //ROUTE POST
-router.post("/", verifyToken, (req, res, next) => {
+router.post("/", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
   Ticket.create(req.body)
     .then((created) => {res.status(200).json({ created });
     console.log(created);
@@ -43,7 +58,7 @@ router.post("/", verifyToken, (req, res, next) => {
 });
 
 //ROUTE UPDATE
-router.patch("/:id", verifyToken, (req, res, next) => {
+router.patch("/:id", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
     const { id } = req.params;
     // Note that new returns the updated version
     Ticket.findByIdAndUpdate(id, req.body, { new: true })
@@ -59,7 +74,7 @@ router.patch("/:id", verifyToken, (req, res, next) => {
   });
   
   //ROUTE DELETE
-  router.delete("/:id", verifyToken, (req, res, next) => {
+  router.delete("/:id", verifyToken, checkRole(["Admin"]), (req, res, next) => {
     const { id } = req.params;
     Ticket.findByIdAndDelete(id)
       .then((deleted) => res.status(200).json({ deleted }))
