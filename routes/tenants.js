@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Tenant = require("../models/Tenant");
-const {verifyToken} = require("../utils/verifytoken");
-
-// se verificaron las rutas de GET POST PATCH y DELETE y funcionan correctamente 
+const {verifyToken} = require("../utils/verifyToken");
+const { checkRole } = require("../utils/checkRole");
 
 
 // GET ROUTE ALL
-router.get("/", verifyToken, function (req, res, next) {
+router.get("/", verifyToken, checkRole(["Tecnician", "Admin"]), function (req, res, next) {
     Tenant.find()
       .then((tenants) => res.status(200).json(tenants))
       .catch((reason) => {
@@ -17,7 +16,7 @@ router.get("/", verifyToken, function (req, res, next) {
   });
 
 //GET ROUTE ID
-router.get("/:id", verifyToken, (req, res, next) => {
+router.get("/:id", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
     const { id } = req.params;
     Tenant.findById(id).then(found => {
         if (found) {
@@ -35,7 +34,7 @@ router.get("/:id", verifyToken, (req, res, next) => {
 });
 
 // CREATE ROUTE 
-router.post("/", verifyToken, (req, res) => {
+router.post("/", verifyToken, checkRole(["Admin"]), (req, res) => {
     Tenant.create(req.body).then(created => {
         console.log(created);
         res.status(200).json({created});
@@ -46,7 +45,7 @@ router.post("/", verifyToken, (req, res) => {
 })
 
 // UPDATE ROUTE 
-router.patch("/:id", verifyToken, (req, res, next) => {
+router.patch("/:id", verifyToken, checkRole(["Admin"]), (req, res, next) => {
     const { id } = req.params;
     // Note that new returns the updated version
     Tenant.findByIdAndUpdate(id, req.body, { new: true })
@@ -62,7 +61,7 @@ router.patch("/:id", verifyToken, (req, res, next) => {
   });
   
   //DELETE ROUTE 
-  router.delete("/:id", verifyToken, (req, res, next) => {
+  router.delete("/:id", verifyToken, checkRole(["Admin"]), (req, res, next) => {
     const { id } = req.params;
     Tenant.findByIdAndDelete(id)
       .then((deleted) => res.status(200).json({ deleted }))
