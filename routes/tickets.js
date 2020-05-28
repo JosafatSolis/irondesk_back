@@ -15,9 +15,24 @@ router.get("/", verifyToken, checkRole(["Tecnician", "Admin"]), function (req, r
   });
 
 //ROUTE GET TENANT_ID
-router.get("/:tenant_id", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
+router.get("/bytenant/:tenant_id", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
   const { tenant_id } = req.params;
   Ticket.find({tenant: tenant_id}).then(found => {
+      if (found) {
+          res.status(200).json(found);
+      } else {
+          res.status(200).json({});
+      }
+  }).catch(reason => {
+      // O que ocurra un error si el id no viene en el formato correcto.
+      console.log("Error: ", reason);
+      res.status(404).json({error: reason});
+  })
+});
+
+router.get("/bytenant/:tenant_id/open", verifyToken, checkRole(["User", "Tecnician", "Admin"]), (req, res, next) => {
+  const { tenant_id } = req.params;
+  Ticket.find({tenant: tenant_id, status: "Open"}).then(found => {
       if (found) {
           res.status(200).json(found);
       } else {

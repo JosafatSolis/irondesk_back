@@ -42,11 +42,11 @@ const ticketsRouter = require("./routes/tickets");
 const authLogin = require ("./utils/login");
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/tenants", tenantsRouter);
-app.use("/devices", devicesRouter);
-app.use("/tickets", ticketsRouter);
-app.use("/login", authLogin);
+app.use("/api/users", usersRouter);
+app.use("/api/tenants", tenantsRouter);
+app.use("/api/devices", devicesRouter);
+app.use("/api/tickets", ticketsRouter);
+app.use("/api/login", authLogin);
 // app.use("/api", indexRouter);
 
 // app.use("*", (req, res) => {
