@@ -47,10 +47,10 @@ app.use("/api/tenants", tenantsRouter);
 app.use("/api/devices", devicesRouter);
 app.use("/api/tickets", ticketsRouter);
 app.use("/api/login", authLogin);
-// app.use("/api", indexRouter);
+ app.use("/api", indexRouter);
 
-// app.use("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "public", "index.html"));
-// });
+ app.use("*", (req, res) => {
+   res.sendFile(path.join(__dirname, "public", "index.html"));
+ });
 
 module.exports = app;
