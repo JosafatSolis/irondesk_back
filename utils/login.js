@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 router.post("/", (req, res, next) => {
   const { email, password } = req.body;
   // Validar que existe el usuario
-  User.findOne({ email }).then((user) => {
+  User.findOne({ email }).populate("tenant", "name code").then((user) => {
     // Si no encontró al usuario
     if (user === null)
       return res.status(404).json({ msg: "Email no encontrado" });
