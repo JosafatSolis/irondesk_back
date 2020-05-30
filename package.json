@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "predeploy": "cd ../irondesk_front && yarn build",
-    "deploy": "cp -r ../irondesk_front/build/ public/"
+    "deploy": "cp -r ../irondesk_front/build/* public/"
   },
   "dependencies": {
     "bcrypt": "^4.0.1",
